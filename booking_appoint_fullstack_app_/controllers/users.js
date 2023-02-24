@@ -1,8 +1,6 @@
 const User = require('../models/users');
  
-exports.getform=(req,res,next)=>{
-    res.send('<h1>form.....</h1>')
-}
+ 
  exports.addUser =async(req,res,next)=>{
     try{
           if(!req.body.phone){
@@ -17,6 +15,7 @@ exports.getform=(req,res,next)=>{
             email:email,
             phone:phone
         });
+        res.json();
         res.status(201).json({newuserdetail:data});
        }
           catch(err){
