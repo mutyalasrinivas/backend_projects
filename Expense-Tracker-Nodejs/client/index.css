@@ -1,0 +1,24 @@
+body {
+    background-image:#dfd8d8;
+  }
+.container{
+  border :2px solid deepskyblue;
+   
+  text-align: center;
+  margin: auto;
+  padding: 50px 50px 50px 50px; 
+   
+}
+input{
+  margin: 10px;
+  align-items: center;
+  border-color: orange;
+  text-decoration: blueviolet;
+}
+h2,label{
+  color: deepskyblue;
+}
+/* #signup{
+  margin: auto;
+  text-align: center;
+} */
