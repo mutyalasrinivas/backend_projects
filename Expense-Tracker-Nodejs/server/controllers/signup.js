@@ -17,7 +17,7 @@ exports.postUser= async(req,res,next)=>{
         const existingUser = await Expense.findOne({where:{ email: email }});
         console.log(existingUser); 
         if(existingUser){
-          return  res.status(409).send('User already exists')
+          return  res.status(201).send('User already exists')
         }
         //create new user
      const newUser= await Expense.create({
