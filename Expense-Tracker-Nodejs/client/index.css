@@ -11,6 +11,7 @@ body {
 }
 input{
   margin: 10px;
+  padding: 10px;
   align-items: center;
   border-color: orange;
   text-decoration: blueviolet;
@@ -18,6 +19,19 @@ input{
 h2,label{
   color: deepskyblue;
 }
+button{
+  width:150px;
+  background-color: deepskyblue;
+  height: 30px;
+}
+select{
+  margin: 10px;
+  width:150px;
+  background-color: yellow;
+  color:blueviolet
+  
+}
+
 /* #signup{
   margin: auto;
   text-align: center;

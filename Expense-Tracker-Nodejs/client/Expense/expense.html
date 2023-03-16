@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker App</title>
+    <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+    <div class="container">
+       <form id="form" method="POST">
+        <h2>Daily Expenses</h2>
+        <label for="expense">Expense</label>
+        <input type="text" name="expense" id="expense" placeholder="Add Expense" required>
+        <label for="description">description</label>
+        <input type="text" name="description" id="description" placeholder="add a description about expense" required>
+        <select name="category" id="category">
+            <option value="food">Food</option>
+            <option value="shopping">Shopping</option>
+            <option value="petrol">Petrol</option>
+        </select><br/>
+        <button onclick="addExpense(e)">Add</button>
+       </form>
+    </div>
+    
+</body>
+</html>

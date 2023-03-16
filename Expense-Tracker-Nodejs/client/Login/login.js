@@ -12,7 +12,7 @@ async function login(e){
         throw new Error("you entered invalid password.....")
       }
       else{
-        return window.alert("login success");
+        return window.location.href="../Expense/expense.html";
        }
          
     

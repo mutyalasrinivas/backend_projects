@@ -2,9 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
  const sequelize = require('../server/utils/database');
-const Expense=require('../server/models/signup');
-const signupRoutes=require('../server/routes/signup')
-const loginRoutes=require('../server/routes/login')
+const User=require('../server/models/users');
+const signupRoutes=require('../server/routes/users')
+const loginRoutes=require('../server/routes/users')
  
 const app = express();
 app.use(bodyParser.urlencoded({extended:true}))
