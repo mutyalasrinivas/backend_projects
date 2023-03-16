@@ -9,13 +9,13 @@
 </head>
 <body>
     <div class="container">
-        <form id="form">
+        <form id="form"  method="POST">
             <h2>Login...</h2>
             <label for="email">Email</label>
             <input type="email" name="email" id="email" placeholder="Enter your Email id" required><br/>
             <label for="password">Password</label>
             <input type="password" name="password" id="password" placeholder="Enter your Password"required><br/>
-            <button onclick="login()">Login</button><br/>
+            <button onclick="login(event)">Login</button><br/>
             <h7>Are you a New User Please Signup?<a href="../Signup/signup.html">Signup...</a></h7>
         </form>
     </div>

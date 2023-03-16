@@ -26,7 +26,7 @@ exports.postUser= async(req,res,next)=>{
             password:password
             })
          console.log("successfully send data to db");
-         res.status(200).send("success post to db")
+         res.status(201).send("success post to db")
    }catch(err){
       console.log("post error: " + err);
       res.status(500).send("Error occurred while posting to database");
