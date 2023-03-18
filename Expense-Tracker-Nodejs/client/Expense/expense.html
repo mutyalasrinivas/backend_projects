@@ -11,8 +11,8 @@
     <div class="container">
        <form id="form" method="POST">
         <h2>Daily Expenses</h2>
-        <label for="expense">Expense</label>
-        <input type="text" name="expense" id="expense" placeholder="Add Expense" required>
+        <label for="money">Expense</label>
+        <input type="number" name="money" id="money" placeholder="Add Expense" required>
         <label for="description">description</label>
         <input type="text" name="description" id="description" placeholder="add a description about expense" required>
         <select name="category" id="category">
@@ -20,9 +20,13 @@
             <option value="shopping">Shopping</option>
             <option value="petrol">Petrol</option>
         </select><br/>
-        <button onclick="addExpense(e)">Add</button>
+        <button onclick="addExpense(event)">Add</button>
        </form>
     </div>
-    
+    <div class="all">
+       <ul id="list"></ul>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js" integrity="sha512-LUKzDoJKOLqnxGWWIBM4lzRBlxcva2ZTztO8bTcWPmDSpkErWx0bSP4pdsjNH8kiHAUPaT06UXcb+vOEZH+HpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="expense.js"></script>
 </body>
 </html>

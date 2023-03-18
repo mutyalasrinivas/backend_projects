@@ -12,10 +12,10 @@ async function login(e){
         throw new Error("you entered invalid password.....")
       }
       else{
+        localStorage.setItem('token',res.data.token);
         return window.location.href="../Expense/expense.html";
        }
          
-    
       
    }catch(err){
           console.log(err);
