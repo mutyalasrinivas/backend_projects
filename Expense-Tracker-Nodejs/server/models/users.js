@@ -18,7 +18,8 @@ const User = sequelize.define('users',{
     },
     password:{
         type:Sequelize.STRING,
-    }
+    },
+    ispremiumuser:Sequelize.BOOLEANS
 })
    
 

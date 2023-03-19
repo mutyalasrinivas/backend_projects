@@ -15,9 +15,10 @@ async function addExpense(event){
        }
        const token = localStorage.getItem('token') 
         const res = await axios.post('http://localhost:3000/expense/addexpense',obj,{headers: {"Authorization": token}})
+        console.log('ressssssss',res)
         if(res.status===200){
             window.alert("success");
-            showUserOnScreen(res.data.expense.id);
+            showUserOnScreen(obj);
         }else{
              throw new Error("failed to send expense details")
         }
@@ -51,6 +52,34 @@ async function deleteExpense(id){
         console.log(err);
     }
     
+}
+
+document.getElementById('rzp-button1').onclick = async function(e){
+    const token = localStorage.getItem('token')
+    const response=await axios.get('http://localhost:3000/purchase/premiummembership',{headers:{"Authorization":token}});
+    console.log(response);
+    var options = 
+    {
+        "key":response.data.key_id,
+        "order_id":response.data.order.id,
+        //this handler function handles the success payment
+        "handler":async function(response){
+            await axios.post('http://localhost:3000/purchase/updatetransactionstatus',{
+                order_id:options.order_id,
+                payment_id:response.razorpay_payment_id,
+            },{ headers:{"Authorization":token}})
+
+            alert('you are a Premium User Now')
+        },
+    };
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+
+    rzp1.on('payment.failed', function(response){
+        console.log(response)
+        alert('Something went wrong')
+    });
 }
 
 async function getdata(){

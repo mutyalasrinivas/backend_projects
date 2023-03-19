@@ -45,6 +45,10 @@ select{
   color:blueviolet
   
 }
+ 
+#buy{
+  float: right!important;
+}
 
 /* #signup{
   margin: auto;

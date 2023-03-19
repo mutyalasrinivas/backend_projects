@@ -16,6 +16,7 @@ exports.addExpense = async(req,res,next)=>{
           res.status(200).send("successfully send expense to db")
     }catch(err){
         console.log("expense controller err------>"+err)
+        res.status(500).send("Failed to add expense to db");
     }
 }
 
