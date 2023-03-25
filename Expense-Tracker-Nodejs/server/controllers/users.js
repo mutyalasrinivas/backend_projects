@@ -2,8 +2,8 @@ const User = require('../models/users')
 
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
- 
-exports.postUser= async(req,res,next)=>{
+
+const postUser= async(req,res,next)=>{
    
    try{
       console.log(req.body);
@@ -42,11 +42,11 @@ exports.postUser= async(req,res,next)=>{
    }
 }
 
-function generateAccessToken(id, name){
-     return jwt.sign({userId:id,name:name},'secretkey')
+const generateAccessToken=(id, name,ispremiumuser)=>{
+     return jwt.sign({userId:id,name:name,ispremiumuser},'secretkey')
 }
 
-exports.loginUser=async(req,res,next)=>{
+const loginUser=async(req,res,next)=>{
      
     try{
          console.log(req.body);
@@ -60,7 +60,7 @@ exports.loginUser=async(req,res,next)=>{
                      throw new Error('Something went wrong')
                  }
                 if(result === true){
-                     res.status(200).json({success:true,message:"user logged in succesfully",token:generateAccessToken(user[0].id,user[0].name)})
+                     res.status(200).json({success:true,message:"user logged in succesfully",token:generateAccessToken(user[0].id,user[0].name,user[0].ispremiumuser)})
                 }
                 else{
                      return res.status(400).json({success:false,message:'password is incorrect'})
@@ -71,6 +71,8 @@ exports.loginUser=async(req,res,next)=>{
            return res.status(404).json({success:false,message:"user does not exit"})
       } 
     }catch(err){
-         console.log("login controller function error")
+         console.log("login controller function error",err)
     }
  }
+
+ module.exports = {postUser,loginUser,generateAccessToken}
