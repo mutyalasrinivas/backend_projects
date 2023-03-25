@@ -1,17 +1,26 @@
+const { NUMBER } = require('sequelize');
 const Expense = require('../models/expense');
+const User = require('../models/users');
+const sequelize = require('../utils/database');
 
 exports.addExpense = async(req,res,next)=>{
     try{
          console.log(req.body);
-         const money= req.body.money;
-         const description = req.body.description;
-         const category = req.body.category;
+         const { money, description, category }=req.body;
+         
 
          const expense = await Expense.create({
-            money:money,
-            description:description,
-            category:category,
+            money,
+            description,
+            category,
             userId:req.user.id
+         })
+         const totalExpense = Number(req.user.totalExpenses)+Number(money)
+         console.log(totalExpense)
+         User.update({
+            totalExpenses:totalExpense
+         },{
+            where:{id:req.user.id}
          })
           res.status(200).send("successfully send expense to db")
     }catch(err){

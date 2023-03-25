@@ -28,7 +28,8 @@ const postUser= async(req,res,next)=>{
             await User.create({
                name:name,
                email:email,
-               password:hash
+               password:hash,
+               totalExpenses:0
                })
             console.log("successfully send data to db");
             res.status(201).send("success post to db")
