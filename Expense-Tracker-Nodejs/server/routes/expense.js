@@ -7,7 +7,7 @@ const{authenticate}=require('../middleware/auth');
 const router =express.Router();
 router.post('/addexpense',authenticate,addExpense);
 router.get('/allexpenses',authenticate,getList);
-router.delete('/expenses/:id',deleteEle);
+router.delete('/expenses/:id',authenticate,deleteEle);
 
 
 
