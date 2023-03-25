@@ -39,17 +39,33 @@ const showUserOnScreen=(obj)=>{
     parentEle.appendChild(childEle);
 }
  
+// async function deleteExpense(id){
+//     try{
+//         await axios.delete(`http://localhost:3000/expense/expenses/${id}`)
+//         const childEle = document.getElementById(id);
+//         const parentEle=document.getElementById("list");
+//         parentEle.removeChild(childEle);
+//     }catch(err){
+//         console.log(err);
+//     }
+    
+// }
 async function deleteExpense(id){
     try{
-        await axios.delete(`http://localhost:3000/expense/expenses/${id}`)
+        const token = localStorage.getItem("token");
+        await axios.delete(`http://localhost:3000/expense/expenses/${id}`, {
+            headers: {
+              "Authorization":token
+            }
+        })
         const childEle = document.getElementById(id);
         const parentEle=document.getElementById("list");
         parentEle.removeChild(childEle);
     }catch(err){
         console.log(err);
-    }
-    
+    }    
 }
+
 
 document.getElementById('rzp-button1').onclick = async function(e){
     const token = localStorage.getItem('token')

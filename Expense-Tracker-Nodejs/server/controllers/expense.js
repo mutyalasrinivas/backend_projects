@@ -56,13 +56,12 @@ exports.getList = async(req, res, next) => {
 //         res.status(500).send("Failed to delete expense from db");
 //     }
 // };
-exports.deleteEle = async(req,res,next)=>{
+exports.deleteEle = async(req, res, next) => {
     const id = req.params.id;
     let t;
-    console.log("req.user--->",req.user)
+
     try {
-         t = await sequelize.transaction();
-         console.log("req.user--->",req.user)
+        t = await sequelize.transaction();
 
         // Get the expense to be deleted
         const expense = await Expense.findByPk(id);
@@ -72,7 +71,7 @@ exports.deleteEle = async(req,res,next)=>{
         }
 
         // Update the user's totalExpenses value (if user is authenticated)
-         
+        if (req.user && req.user.totalExpenses) {
             const totalExpense = Number(req.user.totalExpenses) - Number(expense.money);
             await User.update({
                 totalExpenses: totalExpense
@@ -80,8 +79,7 @@ exports.deleteEle = async(req,res,next)=>{
                 where: {id: req.user.id},
                 transaction: t
             });
-        
-         
+        }
 
         // Delete the expense
         await Expense.destroy({
@@ -94,8 +92,7 @@ exports.deleteEle = async(req,res,next)=>{
         return res.status(202).json("Successfully deleted expense");
     } catch (err) {
         await t.rollback();
-        console.log("deleteEle controller error---->"+err);
+        console.log("deleteEle controller error---->" + err);
         return res.status(500).send("Failed to delete expense from db");
     }
 }
-

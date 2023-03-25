@@ -14,6 +14,7 @@ exports.authenticate = async (req, res, next) => {
           req.user = user;
           next();
      } catch (err) {
+          console.error(err);
           return res.status(401).json({ success: false, message: "Invalid token" });
      }
 }
