@@ -11,8 +11,9 @@ const userRoutes=require('../server/routes/users')
 const expenseRoutes=require('../server/routes/expense');
 const purchaseRoutes = require('../server/routes/purchase')
 const premiumRoutes = require('../server/routes/premium');
+const resetPasswordRoutes = require('./routes/resetpassword');
 const Order = require("./models/orders");
-
+const Forgotpassword = require('./models/forgotpassword');
  
 const app = express();
 dotenv.config();
@@ -23,6 +24,7 @@ app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
 app.use('/purchase',purchaseRoutes)
 app.use('/premium',premiumRoutes)
+app.use('/password',resetPasswordRoutes);
 
  
 
@@ -31,6 +33,9 @@ Expense.belongsTo(User);
 
 User.hasMany(Order);
 Order.belongsTo(User);
+
+User.hasMany(Forgotpassword);
+Forgotpassword.belongsTo(User);
 
 sequelize.sync()
 .then(()=>{
