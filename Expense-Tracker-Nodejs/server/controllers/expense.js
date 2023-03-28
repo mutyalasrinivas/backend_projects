@@ -69,7 +69,7 @@ exports.addExpense = async(req, res, next) => {
     }
 };
 
- 
+//1 
 
 exports.getList = async(req, res, next) => {
     try {
@@ -80,20 +80,7 @@ exports.getList = async(req, res, next) => {
         res.status(500).send("Failed to get expenses from db");
     }
 };
-// exports.deleteEle = async(req, res, next) => {
-//     try {
-//         console.log(req.body);
-//         console.log(req.params.id);
-//         const id = req.params.id;
-
-//         const expense = await Expense.destroy({ where: { id: id } });
-//         console.log("deleted item" + expense);
-//         res.status(202).json("successfully deleted");
-//     } catch (err) {
-//         console.log("deleteEle controller error---->" + err);
-//         res.status(500).send("Failed to delete expense from db");
-//     }
-// };
+ 
 exports.deleteEle = async(req, res, next) => {
     const id = req.params.id;
     let t;

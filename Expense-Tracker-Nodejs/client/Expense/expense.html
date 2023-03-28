@@ -24,15 +24,23 @@
         <button onclick="addExpense(event)">Add</button>
         </form>
     </div>
-        <div id="message"></div>
+     <div id="message"></div>
         <button style="color:red " id="rzp-button1">Buy Premium</button>
         <button onclick="download()" id="downloadexpense">Download File</button>
         <button onclick="downloadFileList()" id="downloadlist">list of downloads</button>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-         
+    <!-- newly added -->
+    <div id="pagination"></div>
     <div class="all">
        <ul id="list"></ul>
     </div>
+    <div id="page-nav">
+        <button id="prev-btn" disabled>Previous</button>
+        <span id="page-info"></span>
+        <button id="next-btn" disabled>Next</button>
+      </div>
+     
+      
      
     <ul id="leaderboard"></ul>
     <div id="download-list"></div>

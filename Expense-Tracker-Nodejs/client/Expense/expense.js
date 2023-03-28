@@ -1,3 +1,8 @@
+//1   
+const pagination = {
+    currentPage: 1,
+    itemsPerPage: 10
+  };
 
 async function addExpense(event){
     try{
@@ -24,32 +29,78 @@ async function addExpense(event){
     }
 }
 
-const showUserOnScreen=(obj)=>{
-    const parentEle = document.getElementById("list");
-    const childEle = document.createElement('li');
-    childEle.id=obj.id;
-    childEle.className="items"
-    childEle.textContent= "MRP."+obj.money +" --- "+ obj.description+" --- " + obj.category;
-    const deleteBtn=document.createElement('input');
-    deleteBtn.type='button';
-    deleteBtn.value='Delete Expense';
-    deleteBtn.setAttribute('onclick',`deleteExpense('${childEle.id}')`)
+//2
 
-    childEle.appendChild(deleteBtn); 
-    parentEle.appendChild(childEle);
-}
- 
-// async function deleteExpense(id){
-//     try{
-//         await axios.delete(`http://localhost:3000/expense/expenses/${id}`)
-//         const childEle = document.getElementById(id);
-//         const parentEle=document.getElementById("list");
-//         parentEle.removeChild(childEle);
-//     }catch(err){
-//         console.log(err);
-//     }
-    
+// const showUserOnScreen=(obj)=>{
+//     const parentEle = document.getElementById("list");
+//     const childEle = document.createElement('li');
+//     childEle.id=obj.id;
+//     childEle.className="items"
+//     childEle.textContent= "MRP."+obj.money +" --- "+ obj.description+" --- " + obj.category;
+//     const deleteBtn=document.createElement('input');
+//     deleteBtn.type='button';
+//     deleteBtn.value='Delete Expense';
+//     deleteBtn.setAttribute('onclick',`deleteExpense('${childEle.id}')`)
+
+//     childEle.appendChild(deleteBtn); 
+//     parentEle.appendChild(childEle);
 // }
+ 
+const showUserOnScreen = (obj) => {
+    const parentEle = document.getElementById("list");
+    const childEle = document.createElement("li");
+    childEle.id = obj.id;
+    childEle.className = "items";
+    childEle.textContent =
+      "MRP." +
+      obj.money +
+      " --- " +
+      obj.description +
+      " --- " +
+      obj.category;
+    const deleteBtn = document.createElement("input");
+    deleteBtn.type = "button";
+    deleteBtn.value = "Delete Expense";
+    deleteBtn.setAttribute("onclick", `deleteExpense('${childEle.id}')`);
+  
+    childEle.appendChild(deleteBtn);
+    parentEle.appendChild(childEle);
+  
+    // Update pagination object
+    const totalExpenses = parentEle.childElementCount;
+    pagination.totalPages = Math.ceil(totalExpenses / pagination.itemsPerPage);
+  
+    // Show only the expenses for the current page
+    const start = (pagination.currentPage - 1) * pagination.itemsPerPage;
+    const end = start + pagination.itemsPerPage;
+    for (let i = 0; i < totalExpenses; i++) {
+      parentEle.children[i].style.display =
+        i >= start && i < end ? "block" : "none";
+    }
+  
+    // Update page navigation buttons
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    prevBtn.disabled = pagination.currentPage === 1;
+    nextBtn.disabled = pagination.currentPage === pagination.totalPages;
+    const pageInfo = document.getElementById("page-info");
+    pageInfo.textContent = `Page ${pagination.currentPage} of ${pagination.totalPages}`;
+  };
+//3
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+
+prevBtn.addEventListener("click", () => {
+  pagination.currentPage--;
+  showUserOnScreen({});
+});
+
+nextBtn.addEventListener("click", () => {
+  pagination.currentPage++;
+  showUserOnScreen({});
+});
+
+//4 
 async function deleteExpense(id){
     try{
         const token = localStorage.getItem("token");
@@ -179,6 +230,7 @@ function showLeaderboard(){
     document.getElementById("message").appendChild(inputElement);
 }
 
+
 window.addEventListener('DOMContentLoaded',async ()=>{
     try{
         const token= localStorage.getItem('token')
@@ -200,4 +252,8 @@ window.addEventListener('DOMContentLoaded',async ()=>{
     }
 })
 
+ 
+
+
+ 
  
