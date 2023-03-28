@@ -1,8 +1,12 @@
-//1   
+savePage=document.getElementById('page-size').value
 const pagination = {
     currentPage: 1,
-    itemsPerPage: 10
+    itemsPerPage:savePage
   };
+ 
+ 
+
+
 
 async function addExpense(event){
     try{
