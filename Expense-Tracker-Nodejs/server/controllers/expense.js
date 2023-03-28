@@ -2,6 +2,42 @@ const { NUMBER } = require('sequelize');
 const Expense = require('../models/expense');
 const User = require('../models/users');
 const sequelize = require('../utils/database');
+const S3Service = require('../services/S3service');
+ 
+const UserServices = require('../services/userservices');
+const DownloadedFile = require('../models/downloadedfile');
+ 
+
+exports.downloadexpense = async(req,res)=>{
+    try{
+        const expenses =await UserServices.getExpenses(req);
+        console.log(expenses)
+        const stringifiedExpenses = JSON.stringify(expenses);
+    
+        // based on userId
+        const userId = req.user.id;
+        const fileName =`Expense${userId}/${new Date()}.txt`;
+        const fileURL = await S3Service.uploadToS3(stringifiedExpenses, fileName);
+        console.log(fileURL);
+
+          // record the downloaded file
+          const downloadedFile = await DownloadedFile.create({
+            fileName,
+            downloadDate: new Date(),
+            userId: req.user.id
+        });
+        res.status(200).json({fileURL, success:true })
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({fileURL:'',success:false,err:err})
+        
+    }
+}
+
+
+
+
 
 exports.addExpense = async(req, res, next) => {
     let t;
@@ -32,6 +68,8 @@ exports.addExpense = async(req, res, next) => {
         res.status(500).send("Failed to add expense to db");
     }
 };
+
+ 
 
 exports.getList = async(req, res, next) => {
     try {

@@ -14,6 +14,7 @@ const premiumRoutes = require('../server/routes/premium');
 const resetPasswordRoutes = require('./routes/resetpassword');
 const Order = require("./models/orders");
 const Forgotpassword = require('./models/forgotpassword');
+const DownloadedFile =require('../server/models/downloadedfile');
  
 const app = express();
 dotenv.config();
@@ -36,6 +37,9 @@ Order.belongsTo(User);
 
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
+
+User.hasMany(DownloadedFile);
+DownloadedFile.belongsTo(DownloadedFile);
 
 sequelize.sync()
 .then(()=>{

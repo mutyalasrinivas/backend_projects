@@ -68,18 +68,50 @@ async function deleteExpense(id){
 
 async function download() {
     try {
-           const response = await axios.get('http://localhost:3000/user/download', { headers: { "Authorization": token } });
-            if (response.status === 201) {
+           const token = localStorage.getItem("token");
+           const response = await axios.get('http://localhost:3000/expense/download', { headers: { "Authorization": token } });
+            if (response.status === 200) {
            var a = document.createElement("a");
-            a.href = response.data.fileUrl;
+            a.href = response.data.fileURL;
             a.download = 'myexpense.csv';
              a.click();
+
            } else {
                throw new Error(response.data.message);
             }
         } catch (err) {
-               showError(err);
+               window.alert(err);
             }
+}
+
+async function downloadFileList(){
+    
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get('http://localhost:3000/expense/downloadlist', {
+            headers: { "Authorization": token }
+          });
+          if (response.status === 200) {
+            const downloadedFiles = response.data.downloads;
+            console.log(downloadedFiles);
+             // Display the list of downloaded files on the screen
+          const downloadList = document.getElementById("download-list");
+         downloadList.innerHTML = "";
+         for (let i = 0; i < downloadedFiles.length; i++) {
+          const fileLink = document.createElement("a");
+            fileLink.href = downloadedFiles[i].fileURL;
+          fileLink.textContent = downloadedFiles[i].fileName;
+          downloadList.appendChild(fileLink);
+          downloadList.appendChild(document.createElement("br"));
+      }
+             
+          } else {
+            throw new Error(response.data.message);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      
 }
 
 document.getElementById('rzp-button1').onclick = async function(e){
