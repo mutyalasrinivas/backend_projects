@@ -1,12 +1,6 @@
-savePage=document.getElementById('page-size').value
-const pagination = {
-    currentPage: 1,
-    itemsPerPage:savePage
-  };
- 
- 
 
-
+let currentPage = 1;
+let rowsPerPage = localStorage.getItem('rowsPerPage')?localStorage.getItem('rowsPerPage'):5;
 
 async function addExpense(event){
     try{
@@ -32,77 +26,88 @@ async function addExpense(event){
         console.log(err);
     }
 }
-
-//2
-
-// const showUserOnScreen=(obj)=>{
-//     const parentEle = document.getElementById("list");
-//     const childEle = document.createElement('li');
-//     childEle.id=obj.id;
-//     childEle.className="items"
-//     childEle.textContent= "MRP."+obj.money +" --- "+ obj.description+" --- " + obj.category;
-//     const deleteBtn=document.createElement('input');
-//     deleteBtn.type='button';
-//     deleteBtn.value='Delete Expense';
-//     deleteBtn.setAttribute('onclick',`deleteExpense('${childEle.id}')`)
-
-//     childEle.appendChild(deleteBtn); 
-//     parentEle.appendChild(childEle);
-// }
  
-const showUserOnScreen = (obj) => {
-    const parentEle = document.getElementById("list");
-    const childEle = document.createElement("li");
-    childEle.id = obj.id;
-    childEle.className = "items";
-    childEle.textContent =
-      "MRP." +
-      obj.money +
-      " --- " +
-      obj.description +
-      " --- " +
-      obj.category;
-    const deleteBtn = document.createElement("input");
-    deleteBtn.type = "button";
-    deleteBtn.value = "Delete Expense";
-    deleteBtn.setAttribute("onclick", `deleteExpense('${childEle.id}')`);
+async function download() {
+  try {
+         const token = localStorage.getItem("token");
+         const response = await axios.get('http://localhost:3000/expense/download', { headers: { "Authorization": token } });
+          if (response.status === 200) {
+             console.log(response);
+           const a = document.createElement("a");
+          a.href = response.data.fileURL;
+          a.download = 'myexpense.csv';
+           a.click();
+
+         } else {
+             throw new Error(response.data.message);
+          }
+      } catch (err) {
+             console.log(err);
+          }
+}
+
+function showPremiumuserMessage(){
+  document.getElementById('rzp-button1').style.visibility="hidden"
+  document.getElementById('message').innerHTML="you are premium user"
+} 
+function showDownloadButtons(){
+  document.getElementById('downloadexpense').style.visibility='visible'
+  document.getElementById('downloadlist').style.visibility='visible'
+}
+
+
+function parseJwt(token) {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+ 
   
-    childEle.appendChild(deleteBtn);
+function showLeaderboard(){
+  const inputElement = document.createElement("input")
+  inputElement.type="button"
+  inputElement.value='Show Leaderboard'
+  inputElement.onclick=async()=>{
+      const token = localStorage.getItem('token')
+      const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{"Authorization":token}})
+      console.log(userLeaderBoardArray)
+      var leaderboardElem = document.getElementById('leaderboard')
+      leaderboardElem.innerHTML+='<h1> Leader Board</h1>'
+      userLeaderBoardArray.data.forEach((userDetails) => {
+          leaderboardElem.innerHTML+=`<li>Name - ${userDetails.name} Total Expenses - ${userDetails.totalExpenses  } `
+      });
+
+  }
+  document.getElementById("message").appendChild(inputElement);
+}
+  
+  document.addEventListener('DOMContentLoaded', getExpenses); 
+
+ 
+
+async function showUserOnScreen(expense){
+  try{
+    const parentEle = document.getElementById("listOfExpense");
+    const childEle = document.createElement('li');
+    childEle.id=expense.id;
+    childEle.className="items"
+    childEle.textContent= "MRP."+expense.money +" --- "+ expense.description+" --- " + expense.category;
+    const deleteBtn=document.createElement('input');
+    deleteBtn.type='button';
+    deleteBtn.value='Delete Expense';
+    deleteBtn.setAttribute('onclick',`deleteExpense('${childEle.id}')`)
+
+    childEle.appendChild(deleteBtn); 
     parentEle.appendChild(childEle);
-  
-    // Update pagination object
-    const totalExpenses = parentEle.childElementCount;
-    pagination.totalPages = Math.ceil(totalExpenses / pagination.itemsPerPage);
-  
-    // Show only the expenses for the current page
-    const start = (pagination.currentPage - 1) * pagination.itemsPerPage;
-    const end = start + pagination.itemsPerPage;
-    for (let i = 0; i < totalExpenses; i++) {
-      parentEle.children[i].style.display =
-        i >= start && i < end ? "block" : "none";
-    }
-  
-    // Update page navigation buttons
-    const prevBtn = document.getElementById("prev-btn");
-    const nextBtn = document.getElementById("next-btn");
-    prevBtn.disabled = pagination.currentPage === 1;
-    nextBtn.disabled = pagination.currentPage === pagination.totalPages;
-    const pageInfo = document.getElementById("page-info");
-    pageInfo.textContent = `Page ${pagination.currentPage} of ${pagination.totalPages}`;
-  };
-//3
-const prevBtn = document.getElementById("prev-btn");
-const nextBtn = document.getElementById("next-btn");
-
-prevBtn.addEventListener("click", () => {
-  pagination.currentPage--;
-  showUserOnScreen({});
-});
-
-nextBtn.addEventListener("click", () => {
-  pagination.currentPage++;
-  showUserOnScreen({});
-});
+  }catch(error){
+      console.log("showonscreen error",error);
+  } 
+    
+}
 
 //4 
 async function deleteExpense(id){
@@ -114,30 +119,13 @@ async function deleteExpense(id){
             }
         })
         const childEle = document.getElementById(id);
-        const parentEle=document.getElementById("list");
+        const parentEle=document.getElementById("listOfExpense");
         parentEle.removeChild(childEle);
     }catch(err){
         console.log(err);
     }    
 }
-
-async function download() {
-    try {
-           const token = localStorage.getItem("token");
-           const response = await axios.get('http://localhost:3000/expense/download', { headers: { "Authorization": token } });
-            if (response.status === 200) {
-           var a = document.createElement("a");
-            a.href = response.data.fileURL;
-            a.download = 'myexpense.csv';
-             a.click();
-
-           } else {
-               throw new Error(response.data.message);
-            }
-        } catch (err) {
-               window.alert(err);
-            }
-}
+ 
 
 async function downloadFileList(){
     
@@ -200,64 +188,84 @@ document.getElementById('rzp-button1').onclick = async function(e){
         alert('Something went wrong')
     });
 }
-
-function showPremiumuserMessage(){
-    document.getElementById('rzp-button1').style.visibility="hidden"
-    document.getElementById('message').innerHTML="you are premium user"
-} 
-
-function parseJwt(token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    return JSON.parse(jsonPayload);
+  
+async function pagination(totalCount) {
+  try {
+    const maxPages = Math.ceil(totalCount / rowsPerPage);
+    document.getElementById('prev-btn').style.display = currentPage > 1 ? "block" : "none";
+    document.getElementById('next-btn').style.display = maxPages > currentPage ? "block" : "none";
+    document.getElementById('rows-per-page').value = rowsPerPage;
+    const start = (currentPage - 1) * rowsPerPage + 1;
+    const temp = start + Number(rowsPerPage) - 1;
+    const end = temp < totalCount ? temp : totalCount;
+    document.getElementById('page-details').textContent = `Showing ${start}-${end} of ${totalCount}`;
+  } catch (error) {
+    console.error(error);
+  }
+  
+  document.getElementById('prev-btn').onclick = function() {
+    showPreviousPage(totalCount);
+  };
+  
+  document.getElementById('next-btn').onclick = function() {
+    showNextPage(totalCount);
+  };
 }
 
-function showLeaderboard(){
-    const inputElement = document.createElement("input")
-    inputElement.type="button"
-    inputElement.value='Show Leaderboard'
-    inputElement.onclick=async()=>{
-        const token = localStorage.getItem('token')
-        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{"Authorization":token}})
-        console.log(userLeaderBoardArray)
-        var leaderboardElem = document.getElementById('leaderboard')
-        leaderboardElem.innerHTML+='<h1> Leader Board</h1>'
-        userLeaderBoardArray.data.forEach((userDetails) => {
-            leaderboardElem.innerHTML+=`<li>Name - ${userDetails.name} Total Expenses - ${userDetails.totalExpenses  } `
-        });
-
-    }
-    document.getElementById("message").appendChild(inputElement);
+async function getExpenses() {
+  // fetch data from server here and update the UI
+  document.getElementById("listOfExpense").innerHTML = "";
+  try{
+    const token = localStorage.getItem('token');
+    const decodedToken = parseJwt(token);
+    const ispremiumuser = decodedToken.ispremiumuser;
+    if(ispremiumuser){
+        showPremiumuserMessage();
+        showLeaderboard();
+        showDownloadButtons();
+    };
+    const response = await axios.get(`http://localhost:3000/expense/allexpenses?page=${currentPage}&rows=${rowsPerPage}`, { headers: {'Authorization': token}})
+   document.getElementById('listOfExpenses').innerHTML = "";
+   const { expenses, totalCount } = response.data;
+   pagination(totalCount);
+   if (expenses.length > 0) {
+       for (let i = 0; i < expenses.length; i++) {
+        showUserOnScreen(response.data.expenses[i]);
+       }
+   } else {
+       document.getElementById('err').textContent = "Currently there are no Expenses!"
+   }
+} catch (error) {
+   console.log(error);
+}
 }
 
+async function showChangedRows() {
+  try {
+    rowsPerPage = event.target.value;
+    localStorage.setItem('rowsPerPage', rowsPerPage);
+    location.reload();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-window.addEventListener('DOMContentLoaded',async ()=>{
-    try{
-        const token= localStorage.getItem('token')
-        const decodeToken = parseJwt(token)
-        console.log(decodeToken)
-        const ispremiumuser = decodeToken.ispremiumuser
-        if(ispremiumuser){
-           showPremiumuserMessage()
-           showLeaderboard()
-        }
-        const result = await axios.get('http://localhost:3000/expense/allexpenses', {headers : {"Authorization": token}})  
-        console.log(result);
-        for(var i=0;i<result.data.allexpenses.length;i++){
-            showUserOnScreen(result.data.allexpenses[i]);
+async function showPreviousPage(totalCount) {
+  try {
+    currentPage--;
+    await getExpenses();
+    pagination(totalCount); // call pagination function after fetching data
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-        }
-    }catch(err){
-        console.log(err);
-    }
-})
-
- 
-
-
- 
- 
+async function showNextPage(totalCount) {
+  try {
+    currentPage++;
+    await getExpenses();
+    pagination(totalCount); // call pagination function after fetching data
+  } catch (error) {
+    console.error(error);
+  }
+}

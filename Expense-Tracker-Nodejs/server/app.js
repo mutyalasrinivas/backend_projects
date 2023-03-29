@@ -4,6 +4,7 @@ const fs= require('fs');
 const path = require('path');
  
 const bodyParser = require("body-parser");
+const sgMail = require('@sendgrid/mail');
 const cors = require("cors");
 const dotenv = require('dotenv');
 const helmet = require('helmet');
@@ -40,6 +41,7 @@ app.use('/premium',premiumRoutes)
 app.use('/password',resetPasswordRoutes);
 app.use(helmet());
 app.use(morgan('combined',{stream:accessLogStream}));
+ 
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -55,7 +57,7 @@ DownloadedFile.belongsTo(DownloadedFile);
 
 sequelize.sync()
 .then(()=>{
-    app.listen(process.env.PORT || 3000,()=>console.log("server running"))
+    app.listen( 3000,()=>console.log("server running"))
 })
 .catch((err)=>{
     console.log("err------>>>>"+err);

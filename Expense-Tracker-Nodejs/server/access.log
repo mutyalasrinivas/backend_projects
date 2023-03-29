@@ -1,0 +1,1 @@
+::1 - - [29/Mar/2023:17:55:15 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "http://localhost:3000/password/forgotpassword/2d6697a5-ec96-40d4-a40f-37b3eb1fb9e9" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"

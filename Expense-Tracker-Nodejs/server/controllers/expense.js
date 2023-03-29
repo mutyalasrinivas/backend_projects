@@ -37,9 +37,6 @@ exports.downloadexpense = async(req,res)=>{
 
 
 
-
-
-
 exports.addExpense = async(req, res, next) => {
     let t;
     try {
@@ -70,17 +67,22 @@ exports.addExpense = async(req, res, next) => {
     }
 };
 
-//1 
-
-exports.getList = async(req, res, next) => {
-    try {
-        const expenses = await Expense.findAll({ where: { userId: req.user.id } });
-        res.status(200).json({ allexpenses: expenses, success: true });
-    } catch (err) {
-        console.log("getlist controller error---->" + err);
-        res.status(500).send("Failed to get expenses from db");
-    }
-};
+ 
+    exports.getExpenses = async (req, res) => {
+        try {
+            const totalCount = await UserServices.countExpenses(req.user);
+            const { page, rows } = req.query;
+            const offset = (page - 1) * rows;
+            const limit = parseInt(rows);
+    
+            const expenses = await req.user.getExpenses({ offset, limit });
+            res.status(200).json({ expenses, totalCount });
+        } catch (error) {
+            res.status(500).json({ message: 'Something went wrong!', error: error });
+            console.log(error);
+        }
+    };
+    
  
 exports.deleteEle = async(req, res, next) => {
     const id = req.params.id;
