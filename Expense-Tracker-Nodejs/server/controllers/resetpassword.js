@@ -1,12 +1,13 @@
- 
+const Sib=require('sib-api-v3-sdk')
 const uuid = require('uuid');
-const sgMail = require('@sendgrid/mail');
 const bcrypt = require('bcrypt');
 const  User  =require('../models/users');
 const Forgotpassword = require('../models/forgotpassword');
 
+require('dotenv').config()
+
 const forgotpassword = async (req, res) => {
-    try {
+
         const { email } =  req.body;
         const user = await User.findOne({where : { email }});
         if(user){
@@ -16,44 +17,41 @@ const forgotpassword = async (req, res) => {
                 .catch(err => {
                     throw new Error(err)
                 })
+              
+   const client = Sib.ApiClient.instance
 
-            sgMail.setApiKey(process.env.SENGRID_API_KEY)
+   const apiKey = client.authentications['api-key']
+   apiKey.apiKey = process.env.API_KEY
+   const tranEmailApi = new Sib.TransactionalEmailsApi()
 
-            const msg = {
-                to:'sribookcreations@gmail.com', // Change to your recipient
-                from: 'srinivasmutyala54@gmail.com', // Change to your verified sender
-                subject: 'Sending with SendGrid is Fun',
-                text: 'and easy to do anywhere, even with Node.js',
-                html: `<a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`,
-            }
-
-            sgMail
-            .send(msg)
-            .then((response) => {
-
-                //  console.log(response[0].statusCode)
-                //  console.log(response[0].headers)
-                return res.status(response[0].statusCode).json({message: 'Link to reset password sent to your mail ', sucess: true})
-
-            })
-            .catch((error) => {
-                throw new Error(error);
-            })
-
-            //send mail
-        }else {
-            throw new Error('User doesnt exist')
-        }
-    } catch(err){
-        console.error(err)
-        return res.json({ message: err, sucess: false });
+   const sender = {
+    email:'srinivasmutyala54@gmail.com',
+    name:'srinivas'
     }
 
-}
+   const receivers = [
+     {
+        email:email,
+     },
+    ]
+
+    tranEmailApi.sendTransacEmail({
+       sender,
+       to:receivers,
+       subject:'Reset Password',
+       textContent:`Follow the link and reset password`,
+       htmlContent: `Click on the link below to reset password<a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`,
+
+    }).then((response)=>{
+      return res.status(202).json({sucess: true, message: "password mail sent Successful"});
+
+    }).catch(err=>console.log(err))
+ }
+}     
 
 const resetpassword = (req, res) => {
     const id =  req.params.id;
-    console.log('id---',id)
+    // console.log('id---',id)
     Forgotpassword.findOne({ where : { id }}).then(forgotpasswordrequest => {
         if(forgotpasswordrequest){
             forgotpasswordrequest.update({ active: false});
@@ -66,9 +64,12 @@ const resetpassword = (req, res) => {
                                     </script>
 
                                     <form action="/password/updatepassword/${id}" method="get">
-                                        <label for="newpassword">Enter New password</label>
-                                        <input name="newpassword" type="password" required></input>
-                                        <button>reset password</button>
+                                    <div style="text-align:center;">
+                                      <h2 style="color:deepskyblue">Expense Tracker App</h2>
+                                        <label for="newpassword" style="color:deepskyblue">Enter New password</label>
+                                        <input name="newpassword" type="password" required style="color:deepskyblue; margin:20px; padding:10px ;background-color:whitesmoke" ></input></br>
+                                        <button style="color:deepskyblue">reset password</button>
+                                        </div>
                                     </form>
                                 </html>`
                                 )

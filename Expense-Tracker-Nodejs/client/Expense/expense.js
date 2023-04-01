@@ -17,7 +17,7 @@ async function addExpense(event){
         const res = await axios.post('http://localhost:3000/expense/addexpense',obj,{headers: {"Authorization": token}})
         console.log('ressssssss',res)
         if(res.status===200){
-            window.alert("success");
+            // window.alert("success");
             showUserOnScreen(obj);
         }else{
              throw new Error("failed to send expense details")
@@ -70,13 +70,15 @@ function parseJwt(token) {
 function showLeaderboard(){
   const inputElement = document.createElement("input")
   inputElement.type="button"
+  inputElement.className="btn btn-warning"
   inputElement.value='Show Leaderboard'
   inputElement.onclick=async()=>{
       const token = localStorage.getItem('token')
       const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{"Authorization":token}})
       console.log(userLeaderBoardArray)
       var leaderboardElem = document.getElementById('leaderboard')
-      leaderboardElem.innerHTML+='<h1> Leader Board</h1>'
+      leaderboardElem.className="container leaderboard"
+      leaderboardElem.innerHTML+='<h1 style="color:deepskyblue"> Leader Board</h1>'
       userLeaderBoardArray.data.forEach((userDetails) => {
           leaderboardElem.innerHTML+=`<li>Name - ${userDetails.name} Total Expenses - ${userDetails.totalExpenses  } `
       });
@@ -98,7 +100,8 @@ async function showUserOnScreen(expense){
     childEle.textContent= "MRP."+expense.money +" --- "+ expense.description+" --- " + expense.category;
     const deleteBtn=document.createElement('input');
     deleteBtn.type='button';
-    deleteBtn.value='Delete Expense';
+    deleteBtn.className="btn btn-sm"
+    deleteBtn.value='Delete';
     deleteBtn.setAttribute('onclick',`deleteExpense('${childEle.id}')`)
 
     childEle.appendChild(deleteBtn); 

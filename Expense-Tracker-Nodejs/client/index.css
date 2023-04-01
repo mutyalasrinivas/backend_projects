@@ -30,14 +30,14 @@ input{
   border-color: orange;
   text-decoration: blueviolet;
 }
-h2,label{
+h2,h4,h7,label{
   color: deepskyblue;
 }
-button{
+/* button{
   width:150px;
   background-color: deepskyblue;
-  height: 30px;
-}
+  
+} */
 select{
   margin: 10px;
   width:150px;
@@ -54,3 +54,48 @@ select{
   margin: auto;
   text-align: center;
 } */
+
+/* .btn,.btn-primary{
+   color:white;
+   background-color: deepskyblue;
+} */
+
+.leaderboard{
+  color: white;
+  background-color:cadetblue;
+  font-size:x-large;
+  font-weight: bolder;
+}
+ 
+.page-btn{
+  height: min-content;
+  width:max-content;
+  color: cornflowerblue;
+  background-color: cyan
+}
+.btn{
+  background-image: linear-gradient(rgb(110, 220, 239), #efd10d);
+}
+ 
+.logform {
+  border :2px solid deepskyblue;
+   width: 40%;
+   height: fit-content;
+  text-align: center;
+  margin:auto;
+  padding-top: 25px 25px 25px 25px;
+   
+}
+
+.jumbo{
+  text-align: center;
+  max-height: max-content;
+}
+.signform {
+  margin-bottom: 35px;
+}
+.footer {
+  background-color: #F1F1F1;
+  text-align: center;
+  padding: 5px;
+}
