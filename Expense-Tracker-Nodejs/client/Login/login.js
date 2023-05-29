@@ -5,7 +5,7 @@ async function login(e){
      const email=document.getElementById("email").value;
      const password=document.getElementById("password").value;
      
-     const res= await axios.post('http://localhost:3000/user/login',{email,password})
+     const res= await axios.post('http://localhost:4000/user/login',{email,password})
       if(res.status===404){
         window.location.href="../Signup/signup.html"
       }else if(res.status===401){

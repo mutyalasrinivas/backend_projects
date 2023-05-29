@@ -1,8 +1,7 @@
-const { NUMBER } = require('sequelize');
 const Expense = require('../models/expense');
 const User = require('../models/users');
-const sequelize = require('../utils/database');
-const S3Service = require('../services/S3service');
+ const S3Service = require('../services/S3service');
+ const mongoose=require('mongoose');
  
 const UserServices = require('../services/userservices');
 const DownloadedFile = require('../models/downloadedfile');
@@ -38,30 +37,35 @@ exports.downloadexpense = async(req,res)=>{
 
 
 exports.addExpense = async(req, res, next) => {
-    let t;
+     
     try {
         console.log(req.body);
-        t = await sequelize.transaction();
+       const session = await mongoose.startSession();
+        session.startTransaction();
         const { money, description, category } = req.body;
+        console.log(req.body)
 
-        const expense = await Expense.create({
+        const expense = await Expense.create([{
             money,
             description,
             category,
             userId: req.user.id
-        }, { transaction: t });
+        }], { session });
         const totalExpense = Number(req.user.totalExpenses) + Number(money);
         console.log(totalExpense);
-        await User.update({
-            totalExpenses: totalExpense
-        }, {
-            where: { id: req.user.id },
-            transaction: t
-        });
-        await t.commit();
-        res.status(200).json({ expense: expense });
+        await User.updateOne(
+            {_id:req.user.id},
+            {totalExpenses: totalExpense},
+            {session }
+        );
+        await session.commitTransaction();
+        session.endSession();
+        res.status(200).json({ expense});
     } catch (err) {
-        if (t) await t.rollback();
+        if (session) {
+            await session.abortTransaction();
+            session.endSession();
+        }
         console.log("expense controller err------>" + err);
         res.status(500).send("Failed to add expense to db");
     }
@@ -70,56 +74,56 @@ exports.addExpense = async(req, res, next) => {
  
     exports.getExpenses = async (req, res) => {
         try {
-            const totalCount = await UserServices.countExpenses(req.user);
+             
             const { page, rows } = req.query;
-            const offset = (page - 1) * rows;
-            const limit = parseInt(rows);
-    
-            const expenses = await req.user.getExpenses({ offset, limit });
-            res.status(200).json({ expenses, totalCount });
+             const limit = parseInt(rows);
+             const skip=(parseInt(page)-1)*limit;
+            const expenseCount = await Expense.countDocuments({userId:req.user.id});
+            const expenses = await Expense.find({ userId:req.user.id})
+            .skip(skip)
+            .limit(limit);
+            res.status(200).json({ expenses, totalCount: expenseCount });
         } catch (error) {
             res.status(500).json({ message: 'Something went wrong!', error: error });
             console.log(error);
         }
     };
-    
+     
  
 exports.deleteEle = async(req, res, next) => {
     const id = req.params.id;
-    let t;
-
+    
+     let session;
     try {
-        t = await sequelize.transaction();
-
+        session = await mongoose.startSession();
+        session.startTransaction();
         // Get the expense to be deleted
-        const expense = await Expense.findByPk(id);
+        const expense = await Expense.findById(id).session(session);
 
         if (!expense) {
+             await session.abortTransaction();
+             session.endSession();
             return res.status(404).send('Expense not found');
         }
 
         // Update the user's totalExpenses value (if user is authenticated)
         if (req.user && req.user.totalExpenses) {
             const totalExpense = Number(req.user.totalExpenses) - Number(expense.money);
-            await User.update({
-                totalExpenses: totalExpense
-            }, {
-                where: {id: req.user.id},
-                transaction: t
-            });
+            await User.findByIdAndUpdate(req.user.id,
+            {totalExpenses: totalExpense},
+            {session}
+            );
         }
 
         // Delete the expense
-        await Expense.destroy({
-            where: {id: id},
-            transaction: t
-        });
+        await Expense.findByIdAndDelete(id,{session});
 
         // Commit the transaction and return success response
-        await t.commit();
+        await session.commitTransaction();
+        session.endSession();
         return res.status(202).json("Successfully deleted expense");
     } catch (err) {
-        await t.rollback();
+          session.abortTransaction();
         console.log("deleteEle controller error---->" + err);
         return res.status(500).send("Failed to delete expense from db");
     }

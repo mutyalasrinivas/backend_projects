@@ -1,5 +1,6 @@
 
 const express = require("express");
+const mongoose = require('mongoose');
 const fs= require('fs');
 const path = require('path');
  const mysql=require('mysql2')
@@ -8,7 +9,7 @@ const bodyParser = require("body-parser");
 const dotenv = require('dotenv');
 const helmet = require('helmet');
 const morgan =require('morgan');
-const sequelize = require('../server/utils/database');
+// const sequelize = require('../server/utils/database');
 const User=require('../server/models/users');
 const Expense = require('../server/models/expense')
 const userRoutes=require('../server/routes/users')
@@ -33,36 +34,43 @@ dotenv.config();
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(cors());
 app.use(express.json());
-app.use('/user',userRoutes);
+ app.use('/user',userRoutes);
 app.use('/expense',expenseRoutes);
-app.use('/purchase',purchaseRoutes)
-app.use('/premium',premiumRoutes)
+ app.use('/purchase',purchaseRoutes)
+ app.use('/premium',premiumRoutes)
 app.use('/password',resetPasswordRoutes);
-app.use(helmet());
-app.use(morgan('combined',{stream:accessLogStream}));
+// app.use(helmet());
+// app.use(morgan('combined',{stream:accessLogStream}));
 
-User.hasMany(Expense);
-Expense.belongsTo(User);
+// User.hasMany(Expense);
+// Expense.belongsTo(User);
 
-User.hasMany(Order);
-Order.belongsTo(User);
+// User.hasMany(Order);
+// Order.belongsTo(User);
 
-User.hasMany(Forgotpassword);
-Forgotpassword.belongsTo(User);
+// User.hasMany(Forgotpassword);
+// Forgotpassword.belongsTo(User);
 
-User.hasMany(DownloadedFile);
-DownloadedFile.belongsTo(DownloadedFile);
+// User.hasMany(DownloadedFile);
+// DownloadedFile.belongsTo(DownloadedFile);
 
-sequelize.sync()
-.then(()=>{
-    app.listen(process.env.PORT|| 3000,()=>console.log("server running"))
+// sequelize.sync()
+// .then(()=>{
+//     app.listen(process.env.PORT|| 4000,()=>console.log("server running"))
+// })
+// .catch((err)=>{
+//     console.log("err------>>>>"+err);
+// })
+
+//mongodb+srv://sri:sri2023@cluster0.7ijgr7x.mongodb.net/shop?retryWrites=true
+
+mongoose.connect('mongodb+srv://sri:sri2023@cluster0.7ijgr7x.mongodb.net/expense?retryWrites=true')
+.then(result=>{
+    app.listen(4000,()=>console.log("server running on 4000"))
 })
-.catch((err)=>{
-    console.log("err------>>>>"+err);
+.catch(err=>{
+    console.log(err);
 })
-
-
-
 
 
 

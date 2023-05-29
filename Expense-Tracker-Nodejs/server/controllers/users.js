@@ -16,7 +16,7 @@ const postUser= async(req,res,next)=>{
          return res.status(400).send('Missing required field(s)');
          }
         // Check if user already exists
-        const existingUser = await User.findOne({where:{ email: email }});
+        const existingUser = await User.findOne({email});
         console.log(existingUser); 
         if(existingUser){
           return  res.status(201).send('User already exists')
@@ -53,7 +53,7 @@ const loginUser=async(req,res,next)=>{
          console.log(req.body);
          const {email,password} = req.body;
          //find user in db
-         const user = await User.findAll({where:{email}});
+         const user = await User.find({email});
          //if the user doest not exist
          if(user.length > 0){
            bcrypt.compare(password,user[0].password,(err,result)=>{

@@ -9,7 +9,7 @@ try{
     const email=document.getElementById('email').value
     const password=document.getElementById('password').value
  
-   const res= await axios.post("http://localhost:3000/user/signup",{name,email,password})
+   const res= await axios.post("http://localhost:4000/user/signup",{name,email,password})
   if(res.status===201){
     window.location.href="../Login/login.html"
  }else{
